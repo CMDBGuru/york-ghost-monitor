@@ -1,0 +1,56 @@
+name: York Ghost Monitor
+
+on:
+  schedule:
+    # Every 5 minutes (UTC). GitHub's free scheduler may occasionally delay or
+    # skip a run under heavy load -- this is the fastest tier available.
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      send_test:
+        description: "Send a test push + email to verify delivery, then exit"
+        type: boolean
+        default: false
+
+# Allow the job to commit the updated state.json back to the repo.
+permissions:
+  contents: write
+
+# Never let two checks overlap.
+concurrency:
+  group: ghost-monitor
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run monitor
+        env:
+          SMTP_HOST: smtp.gmail.com
+          SMTP_PORT: "587"
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_TO_EMAIL: ${{ secrets.MAIL_TO_EMAIL }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          SEND_TEST: ${{ inputs.send_test == true && '1' || '0' }}
+        run: python monitor.py
+
+      - name: Commit updated state
+        if: ${{ inputs.send_test != true }}
+        run: |
+          if [ -n "$(git status --porcelain state.json)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state.json
+            git commit -m "Update ghost state [skip ci]"
+            git push
+          else
+            echo "No state change."
+          fi

@@ -1,10 +1,15 @@
 name: York Ghost Monitor
 
+# GitHub's free "*/5" scheduler is heavily throttled and in practice may not
+# fire for an hour or more -- useless for a drop that sells out in minutes.
+# So instead of asking cron for a 5-minute cadence, ONE job loops internally
+# every 5 minutes for ~55 minutes. An hourly cron (far more reliable than
+# */5) restarts it, and the job also re-launches itself at the end so the
+# chain keeps going even if cron is late. Public repo => unlimited minutes.
+
 on:
   schedule:
-    # Every 5 minutes (UTC). GitHub's free scheduler may occasionally delay or
-    # skip a run under heavy load -- this is the fastest tier available.
-    - cron: "*/5 * * * *"
+    - cron: "0 * * * *"       # hourly watchdog / restarter
   workflow_dispatch:
     inputs:
       send_test:
@@ -12,18 +17,19 @@ on:
         type: boolean
         default: false
 
-# Allow the job to commit the updated state.json back to the repo.
 permissions:
-  contents: write
+  contents: write             # commit state.json
+  actions: write              # re-launch self
 
-# Never let two checks overlap.
+# A newer run replaces the running loop rather than queueing behind it.
 concurrency:
   group: ghost-monitor
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +37,9 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run monitor
+      # --- One-shot test: send alerts and stop. ---
+      - name: Send test alert
+        if: ${{ inputs.send_test == true }}
         env:
           SMTP_HOST: smtp.gmail.com
           SMTP_PORT: "587"
@@ -39,18 +47,41 @@ jobs:
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           MAIL_TO_EMAIL: ${{ secrets.MAIL_TO_EMAIL }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          SEND_TEST: ${{ inputs.send_test == true && '1' || '0' }}
+          SEND_TEST: "1"
         run: python monitor.py
 
-      - name: Commit updated state
+      # --- Normal mode: check every 5 minutes for ~55 minutes. ---
+      - name: Watch for ghosts
         if: ${{ inputs.send_test != true }}
+        env:
+          SMTP_HOST: smtp.gmail.com
+          SMTP_PORT: "587"
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_TO_EMAIL: ${{ secrets.MAIL_TO_EMAIL }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: |
-          if [ -n "$(git status --porcelain state.json)" ]; then
-            git config user.name  "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add state.json
-            git commit -m "Update ghost state [skip ci]"
-            git push
-          else
-            echo "No state change."
-          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          END=$(( $(date +%s) + 55*60 ))
+          i=0
+          while [ "$(date +%s)" -lt "$END" ]; do
+            i=$((i+1))
+            echo "--- check #$i at $(date -u +%H:%M:%S) UTC ---"
+            python monitor.py || echo "check failed, continuing"
+            if [ -n "$(git status --porcelain state.json)" ]; then
+              git add state.json
+              git commit -m "Update ghost state [skip ci]" || true
+              git pull --rebase --autostash -q origin main || true
+              git push -q origin HEAD:main || echo "push failed, will retry next cycle"
+            fi
+            sleep 300
+          done
+          echo "Loop window finished."
+
+      # --- Hand off to a fresh run so the chain never stops. ---
+      - name: Re-launch self
+        if: ${{ inputs.send_test != true && always() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run monitor.yml --repo "$GITHUB_REPOSITORY" || true

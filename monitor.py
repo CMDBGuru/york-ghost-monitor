@@ -280,12 +280,17 @@ def main():
         print(f"[{name}] {n} item(s)"
               + (f" hash={cur.get('hash')}" if "hash" in cur else ""))
 
-    state = {
-        "initialized": True,
-        "updated": datetime.now(timezone.utc).isoformat(),
-        "pages": new_pages,
-    }
-    save_state(state)
+    # Only rewrite state.json when the page data actually changed. Otherwise a
+    # timestamp-only diff would commit on every single check (~288/day).
+    if new_pages != prev_pages or first_run:
+        save_state({
+            "initialized": True,
+            "updated": datetime.now(timezone.utc).isoformat(),
+            "pages": new_pages,
+        })
+        print("state updated")
+    else:
+        print("state unchanged")
 
     if first_run:
         print("First run: baseline saved, no alerts sent.")

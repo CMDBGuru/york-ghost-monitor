@@ -1,0 +1,54 @@
+name: Monitor Keeper
+
+# Watchdog for "York Ghost Monitor".
+#
+# Why this exists: the monitor's own "re-launch self" step lives inside a job
+# that is routinely cancelled during handoff, so it cannot be trusted to
+# restart the chain -- a cancelled job can die before that step runs. This
+# workflow is a SEPARATE run, so it survives the monitor's cancellation and
+# restarts it. It fires both when the monitor finishes (any conclusion:
+# success, failure, or cancelled) and on its own timer as a backstop.
+#
+# It only starts the monitor when none is running/queued, so it can never
+# spawn a runaway pile of duplicate runs.
+
+on:
+  workflow_run:
+    workflows: ["York Ghost Monitor"]
+    types: [completed]
+  schedule:
+    - cron: "*/30 * * * *"      # backstop: GitHub throttles short crons, but
+                                # even a delayed tick caps the outage window
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+concurrency:
+  group: ghost-keeper
+  cancel-in-progress: false
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Restart the monitor if it isn't running
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Give a handoff-launched successor a moment to register.
+          sleep 25
+          running=$(gh run list --repo "$GITHUB_REPOSITORY" \
+            --workflow=monitor.yml --status in_progress \
+            --json databaseId --jq 'length')
+          queued=$(gh run list --repo "$GITHUB_REPOSITORY" \
+            --workflow=monitor.yml --status queued \
+            --json databaseId --jq 'length')
+          echo "monitor runs -> in_progress=$running queued=$queued"
+          if [ "$running" -eq 0 ] && [ "$queued" -eq 0 ]; then
+            echo "No monitor running. Restarting it."
+            gh workflow run monitor.yml --repo "$GITHUB_REPOSITORY"
+          else
+            echo "Monitor already alive. Nothing to do."
+          fi

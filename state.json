@@ -1,16 +1,9 @@
 {
   "initialized": true,
-  "updated": "2026-08-04T18:25:49.820059+00:00",
+  "updated": "2026-08-06T12:22:05.880901+00:00",
   "pages": {
     "shop": {
-      "items": {
-        "6a70755a51c18465935d5b33": {
-          "title": "Original York Ghost- The Finial Ghost of Miss Cowings",
-          "url": "/shop/p/original-york-ghost-master-copyshop-l39ra",
-          "price": "£29.00",
-          "inStock": false
-        }
-      }
+      "items": {}
     },
     "rare-and-unusual": {
       "items": {}

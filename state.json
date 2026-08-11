@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "updated": "2026-08-10T10:03:36.677335+00:00",
+  "updated": "2026-08-11T10:00:57.258666+00:00",
   "pages": {
     "shop": {
       "items": {}
@@ -15,15 +15,8 @@
       "items": {}
     },
     "bowlerhat": {
-      "items": {
-        "6a732ee8415c575e38e1a43c": {
-          "title": "Original York Ghost - The Vintner",
-          "url": "/bowlerhat/p/original-york-ghost-1-xkjr4-3zjes-8jzp7-2rdnh-3pamy-6ljdz-mxt6n-b6hse",
-          "price": "£19.00",
-          "inStock": true
-        }
-      },
-      "hash": "99b5b02c65e7eb4e"
+      "items": {},
+      "hash": "f31162451a3fe293"
     }
   }
 }

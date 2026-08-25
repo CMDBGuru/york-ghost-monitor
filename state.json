@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "updated": "2026-08-25T09:47:29.645516+00:00",
+  "updated": "2026-08-25T09:57:33.959078+00:00",
   "pages": {
     "shop": {
       "items": {}
@@ -15,15 +15,8 @@
       "items": {}
     },
     "bowlerhat": {
-      "items": {
-        "6a8d4d20900acc637af9c100": {
-          "title": "Original York Ghost - Bowler Hat - AUS Tester",
-          "url": "/bowlerhat/p/original-york-ghost-1-xkjr4-3zjes-8jzp7-2rdnh-3pamy-6ljdz-mxt6n-lwmx3",
-          "price": "£1.00",
-          "inStock": true
-        }
-      },
-      "hash": "8ddd5c019001678f"
+      "items": {},
+      "hash": "f31162451a3fe293"
     }
   }
 }

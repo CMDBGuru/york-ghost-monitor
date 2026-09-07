@@ -1,16 +1,9 @@
 {
   "initialized": true,
-  "updated": "2026-09-07T15:12:49.410319+00:00",
+  "updated": "2026-09-07T15:17:53.523629+00:00",
   "pages": {
     "shop": {
-      "items": {
-        "6a9e81dcf0c7a604d5822ca0": {
-          "title": "Original York Ghost- Finial Ghost of Mrs Humphreys",
-          "url": "/shop/p/original-york-ghost-master-copyshop-3sklz",
-          "price": "£19.00",
-          "inStock": true
-        }
-      }
+      "items": {}
     },
     "rare-and-unusual": {
       "items": {}

@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "updated": "2026-09-14T09:03:59.216986+00:00",
+  "updated": "2026-09-15T09:04:46.325285+00:00",
   "pages": {
     "shop": {
       "items": {}
@@ -15,15 +15,8 @@
       "items": {}
     },
     "bowlerhat": {
-      "items": {
-        "6aa118dda38d081216c4355f": {
-          "title": "Original York Ghost - The Watchman",
-          "url": "/bowlerhat/p/original-york-ghost-1-xkjr4-3zjes-8jzp7-2rdnh-3pamy-6ljdz-mxt6n-fawtl",
-          "price": "£23.00",
-          "inStock": true
-        }
-      },
-      "hash": "5f03f923aad96dc5"
+      "items": {},
+      "hash": "f31162451a3fe293"
     }
   }
 }

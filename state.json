@@ -1,16 +1,9 @@
 {
   "initialized": true,
-  "updated": "2026-10-08T20:33:04.328714+00:00",
+  "updated": "2026-10-08T20:38:09.642514+00:00",
   "pages": {
     "shop": {
-      "items": {
-        "6ac791761eb20768882d76ca": {
-          "title": "Original York Ghost- The Finial Ghost of Ms George",
-          "url": "/shop/p/original-york-ghost-master-copyshop-srxxe",
-          "price": "£19.00",
-          "inStock": true
-        }
-      }
+      "items": {}
     },
     "rare-and-unusual": {
       "items": {}

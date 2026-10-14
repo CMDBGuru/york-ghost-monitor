@@ -1,16 +1,9 @@
 {
   "initialized": true,
-  "updated": "2026-10-14T21:16:55.310468+00:00",
+  "updated": "2026-10-14T21:22:00.459612+00:00",
   "pages": {
     "shop": {
-      "items": {
-        "6acf79e507090f0b7de9abf9": {
-          "title": "Original York Ghost - The Finial Ghost of Mr Fletcher",
-          "url": "/shop/p/original-york-ghost-master-copyshop-lcyas",
-          "price": "£19.00",
-          "inStock": true
-        }
-      }
+      "items": {}
     },
     "rare-and-unusual": {
       "items": {}

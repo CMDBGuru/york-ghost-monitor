@@ -1,9 +1,16 @@
 {
   "initialized": true,
-  "updated": "2026-10-14T21:22:00.459612+00:00",
+  "updated": "2026-10-21T11:00:12.275643+00:00",
   "pages": {
     "shop": {
-      "items": {}
+      "items": {
+        "6ad895cbecc77a6bcc81b1ef": {
+          "title": "Original York Ghost - The Finial Ghost of Ms Bet",
+          "url": "/shop/p/original-york-ghost-master-copyshop-77fby",
+          "price": "£29.00",
+          "inStock": true
+        }
+      }
     },
     "rare-and-unusual": {
       "items": {}

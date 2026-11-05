@@ -1,9 +1,16 @@
 {
   "initialized": true,
-  "updated": "2026-10-21T13:05:58.603059+00:00",
+  "updated": "2026-11-05T08:30:54.058726+00:00",
   "pages": {
     "shop": {
-      "items": {}
+      "items": {
+        "6ae9bec147938e35045b1d2e": {
+          "title": "Original York Ghost - The Finial Ghost of Miss Braithwaite",
+          "url": "/shop/p/original-york-ghost-master-copyshop-ajepd",
+          "price": "£44.00",
+          "inStock": true
+        }
+      }
     },
     "rare-and-unusual": {
       "items": {}

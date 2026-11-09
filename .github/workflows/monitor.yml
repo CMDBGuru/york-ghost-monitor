@@ -23,7 +23,7 @@ permissions:
 
 # A newer run replaces the running loop rather than queueing behind it.
 concurrency:
-  group: ghost-monitor
+  group: ghost-monitor-${{ inputs.send_test == true && 'test' || 'loop' }}
   cancel-in-progress: true
 
 jobs:
